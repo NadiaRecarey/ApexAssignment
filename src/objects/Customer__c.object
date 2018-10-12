@@ -95,14 +95,13 @@
     </fields>
     <fields>
         <fullName>Email__c</fullName>
-        <caseSensitive>false</caseSensitive>
         <externalId>false</externalId>
         <label>Email</label>
         <length>100</length>
         <required>true</required>
         <trackTrending>false</trackTrending>
         <type>Text</type>
-        <unique>true</unique>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>Financial_Advisor__c</fullName>
@@ -154,6 +153,7 @@
         <columns>NAME</columns>
         <columns>First_Name__c</columns>
         <columns>Last_Name__c</columns>
+        <columns>Account_Customer_Number__c</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>

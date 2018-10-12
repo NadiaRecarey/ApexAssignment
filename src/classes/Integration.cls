@@ -1,21 +1,15 @@
 global class Integration{
 
-    public String getUsersFromS3(){
-        HTTPResponse resp = AWSUtility.getS3file ('sfdc-training', 'FinancialAdvisors.json');
-        return resp.getBody();
-    }
-
-    public void upsertUsers(String json){
+    public static void upsertUsers(HttpResponse resp){
 
         /*PARSE JSON*/
-        List<JSON2Apex> financialAccounts = Json2Apex.parse(json);
+        List<FinancialAdvisorsWrapper> financialAccounts = FinancialAdvisorsWrapper.parse(resp.getBody());
         
-
         /*UPSERT FINANCIAL ADVISORS*/
         List<Financial_Advisor__c> financialAdvisors = new List<Financial_Advisor__c>();
 
-        for (JSON2Apex j2a : financialAccounts){
-            for(Json2Apex.Financial_Advisor fa : j2a.Accounts){
+        for (FinancialAdvisorsWrapper j2a : financialAccounts){
+            for(FinancialAdvisorsWrapper.Financial_Advisor fa : j2a.Accounts){
                 String[] aod = fa.AsOfDate.split('/');
                 Financial_Advisor__c f = new Financial_Advisor__c(
                                             Account_Number__c = fa.AccountNumber,
@@ -29,7 +23,8 @@ global class Integration{
 
         upsert financialAdvisors Account_Number__c;
 
-        List<Financial_Advisor__c> fasMAP = new List<Financial_Advisor__c>([SELECT ID,Account_Number__c FROM Financial_Advisor__c]);
+        List<Financial_Advisor__c> fasMAP = new List<Financial_Advisor__c>(
+            [SELECT ID,Account_Number__c FROM Financial_Advisor__c]);
         MAP<String, ID> allFARecords = new MAP<String,ID>();
         for(Financial_Advisor__c record: fasMAP) {
             allFARecords.put(record.Account_Number__c, record.ID);
@@ -38,9 +33,9 @@ global class Integration{
         /*UPSERT CUSTOMERS*/ 
         List<Customer__c> custs = new List<Customer__c>();
 
-        for (JSON2Apex j2a : financialAccounts){
-            for(Json2Apex.Financial_Advisor acc : j2a.Accounts){      
-                for (JSON2Apex.Customers c : acc.Customers){
+        for (FinancialAdvisorsWrapper j2a : financialAccounts){
+            for(FinancialAdvisorsWrapper.Financial_Advisor acc : j2a.Accounts){      
+                for (FinancialAdvisorsWrapper.Customers c : acc.Customers){
                     Customer__c cust = new Customer__c(
                                     First_Name__c = c.FirstName,
                                     Last_Name__c = c.LastName,
@@ -69,6 +64,14 @@ global class Integration{
         List<Financial_Advisor__c> fasToDelete = new List<Financial_Advisor__c>();
         List<Customer__c> cusToDelete = new List<Customer__c>();
 
+        List<Customer__c> salesforceCus = [SELECT Id FROM Customer__c];    
+        for(Customer__c cus : salesforceCus)
+            if(!ids.contains(cus.Id))
+                cusToDelete.add(cus);
+            
+        delete cusToDelete;
+
+
         List<Financial_Advisor__c> salesforceFAS = [SELECT Id FROM Financial_Advisor__c];
         
         for (Financial_Advisor__c sffas : salesforceFAS)
@@ -77,12 +80,7 @@ global class Integration{
 
         delete fasToDelete;
             
-        List<Customer__c> salesforceCus = [SELECT Id FROM Customer__c];    
-        for(Customer__c cus : salesforceCus)
-            if(!ids.contains(cus.Id))
-                cusToDelete.add(cus);
-            
-        delete cusToDelete;
+        
    } 
  
 }
