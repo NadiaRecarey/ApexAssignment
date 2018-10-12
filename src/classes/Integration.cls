@@ -1,5 +1,12 @@
 global class Integration{
 
+    /**
+    * @description This method takes all users retreived from the aws s3 bucket and upserts them in  
+    *              Salesforce. In case there is a user in Salesforce who's no longer in the json
+    *              it is deleted
+    *
+    * @param resp HttpResponse obtained from the callout to de aws s3 bucket, to get the file
+    */
     public static void upsertUsers(HttpResponse resp){
 
         /*PARSE JSON*/
@@ -8,8 +15,8 @@ global class Integration{
         /*UPSERT FINANCIAL ADVISORS*/
         List<Financial_Advisor__c> financialAdvisors = new List<Financial_Advisor__c>();
 
-        for (FinancialAdvisorsWrapper j2a : financialAccounts){
-            for(FinancialAdvisorsWrapper.Financial_Advisor fa : j2a.Accounts){
+        for (FinancialAdvisorsWrapper j : financialAccounts){
+            for(FinancialAdvisorsWrapper.Financial_Advisor fa : j.Accounts){
                 String[] aod = fa.AsOfDate.split('/');
                 Financial_Advisor__c f = new Financial_Advisor__c(
                                             Account_Number__c = fa.AccountNumber,
@@ -33,8 +40,8 @@ global class Integration{
         /*UPSERT CUSTOMERS*/ 
         List<Customer__c> custs = new List<Customer__c>();
 
-        for (FinancialAdvisorsWrapper j2a : financialAccounts){
-            for(FinancialAdvisorsWrapper.Financial_Advisor acc : j2a.Accounts){      
+        for (FinancialAdvisorsWrapper j : financialAccounts){
+            for(FinancialAdvisorsWrapper.Financial_Advisor acc : j.Accounts){      
                 for (FinancialAdvisorsWrapper.Customers c : acc.Customers){
                     Customer__c cust = new Customer__c(
                                     First_Name__c = c.FirstName,

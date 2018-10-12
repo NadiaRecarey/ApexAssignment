@@ -1,5 +1,5 @@
 public class AWSUtility {
-    
+
     /**
     * @description Returns the http response of callout to aws s3 bucket
     *
@@ -8,8 +8,8 @@ public class AWSUtility {
     *
     * @return httpRespone of the callout 
     */
-	public static HTTPResponse getS3file (String bucketName, String fileName) {
-         
+    public static HttpResponse getS3file (String bucketName, String fileName) {
+        
         String formattedDateString = DateTime.now().formatGMT('EEE, dd MMM yyyy HH:mm:ss z');
         String host = 's3.amazonaws.com';
 
@@ -41,6 +41,5 @@ public class AWSUtility {
         resp = http.send(req);
         
         return resp;
-
     }
 }
