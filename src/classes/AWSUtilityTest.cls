@@ -1,14 +1,6 @@
 @isTest(SeeAllData=true)
 public class AWSUtilityTest {
     static testmethod void testGetS3File() {
-		/*
-        StaticResourceCalloutMock mock = new StaticResourceCalloutMock();
-        mock.setStaticResource('getS3');
-        mock.setStatusCode(200);
-        mock.setHeader('Content-Type', 'application/json;charset=UTF-8');
-        Test.setMock(HttpCalloutMock.class, mock);
-        HTTPResponse result = AWSUtility.getS3file ('sfdc-training', 'FinancialAdvisors.json');
-        */
 
         Test.setMock(HttpCalloutMock.class, new MockHttpResponseGenerator());
         AWSUtility awsu = new AWSUtility();
@@ -23,5 +15,16 @@ public class AWSUtilityTest {
 
         System.assertEquals(body, result.getBody(), 'The body of the response is different as expected');          
 
+    }
+
+    static testmethod void testError(){
+        try{
+            Test.setMock(HttpCalloutMock.class, new MockHttpResponseGenerator());
+            AWSUtility awsu = new AWSUtility();
+
+            HTTPResponse result = AWSUtility.getS3file('Bucket-name', 'File-name');
+        }catch (Exception e){
+            System.assert(e.getMessage().contains('The following exception has occurred: Unauthorized endpoint'));
+        }
     }
 }

@@ -41,13 +41,7 @@ public class AWSUtility {
             resp = http.send(req);
 
         }catch (Exception e){
-            Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-            String[] toAddresses = new String[] {'nadia.recarey@modelit.xyz'}; //get sysadmin address
-            mail.setToAddresses(toAddresses);
-            mail.setSubject('Error while obtaining users from the s3 bucket');
-            mail.setPlainTextBody('The following exception has occurred: ' + e.getMessage());
-            
-            Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
+            ErrorHandler.handleError(e.getLineNumber(), e.getMessage(), e.getTypeName());
         } 
                     
         return resp;
