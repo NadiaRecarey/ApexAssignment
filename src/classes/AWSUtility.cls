@@ -8,8 +8,8 @@ public class AWSUtility {
     *
     * @return httpRespone of the callout 
     */
-    public static HttpResponse getS3file (String bucketName, String fileName) {
-        HttpResponse resp;
+    public static String getS3file (String bucketName, String fileName) {
+        String ret;
         try{
             String formattedDateString = DateTime.now().formatGMT('EEE, dd MMM yyyy HH:mm:ss z');
             String host = 's3.amazonaws.com';
@@ -38,12 +38,13 @@ public class AWSUtility {
             req.setHeader('Authorization', authHeader);
             Http http = new Http();
             
-            resp = http.send(req);
+            HttpResponse resp = http.send(req);
+            ret = resp.getBody();
 
         }catch (Exception e){
             ErrorHandler.handleError(e.getLineNumber(), e.getMessage(), e.getTypeName());
         } 
                     
-        return resp;
+        return ret;
     }
 }
