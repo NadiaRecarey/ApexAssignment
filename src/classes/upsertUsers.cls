@@ -10,8 +10,8 @@ global class upsertUsers implements Schedulable {
     @future (callout=true)
     static void makeCallout(){ 
         /* get the file */
-        HttpResponse resp = AWSUtility.getS3file ('sfdc-training', 'FinancialAdvisors.json');
+        String resp = AWSUtility.getS3file ('sfdc-training', 'FinancialAdvisors.json');
         /* integrate data on salesforce */
-        Integration.upsertUsers(resp); 
+        FinancialAdvisorsIntegration.upsertUsers(resp); 
     }
 }

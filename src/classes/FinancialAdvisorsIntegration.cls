@@ -1,5 +1,5 @@
-global class Integration{
-
+public class FinancialAdvisorsIntegration {
+	
     /**
     * @description This method takes all users retreived from the aws s3 bucket and upserts them in  
     *              Salesforce. In case there is a user in Salesforce who's no longer in the json
@@ -7,11 +7,11 @@ global class Integration{
     *
     * @param resp HttpResponse obtained from the callout to de aws s3 bucket, to get the file
     */
-    public static void upsertUsers(HttpResponse resp){
+    public static void upsertUsers(String resp){
         
         try{
             /*PARSE JSON*/
-            List<FinancialAdvisorsWrapper> financialAccounts = FinancialAdvisorsWrapper.parse(resp.getBody());
+            List<FinancialAdvisorsWrapper> financialAccounts = FinancialAdvisorsWrapper.parse(resp);
             
             /*UPSERT FINANCIAL ADVISORS*/
             List<Financial_Advisor__c> financialAdvisors = new List<Financial_Advisor__c>();
